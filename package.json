@@ -1,0 +1,24 @@
+{
+  "name": "alberto-watch-company",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Alberto Watch Company — a responsive single-page application for a fictional luxury watch retailer (academic project).",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "start": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "bootstrap": "5.3.3",
+    "leaflet": "^1.9.4",
+    "react": "18.3.1",
+    "react-bootstrap": "2.10.9",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.3.4",
+    "vite": "5.4.11"
+  }
+}
