@@ -3,7 +3,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { CheckIcon, ErrorIcon } from './WatchArt.jsx'
 import { useGeolocation, useReveal } from '../hooks/hooks.js'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { stores } from '../data/siteContent.js'
 
 function storePopup(store) {
   return `
@@ -97,9 +97,6 @@ function StoreMap({ stores, activeId, onSelect }) {
 /* ------------------------------ Section --------------------------------- */
 
 export default function StoreLocator() {
-  const { content } = useSiteContent()
-  const stores = content.stores
-
   const [geo, locate] = useGeolocation()
   const [active, setActive] = useState(stores[0]?.id || '')
   const [headRef, headVisible] = useReveal()

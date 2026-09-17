@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { MailIcon, PhoneIcon, PinIcon, ClockGlyph, CheckIcon } from './WatchArt.jsx'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { contact } from '../data/siteContent.js'
 
 const EMPTY = { name: '', email: '', phone: '', subject: '', message: '' }
 
@@ -23,9 +23,6 @@ export function validateContactForm(values) {
 const SUBJECTS = ['General Enquiry', 'Product Question', 'Repair Status', 'Appraisal Booking', 'Feedback']
 
 export default function Contact() {
-  const { content } = useSiteContent()
-  const { contact } = content
-
   const [values, setValues] = useState(EMPTY)
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})

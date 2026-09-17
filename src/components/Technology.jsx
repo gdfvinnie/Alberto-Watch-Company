@@ -1,5 +1,5 @@
 import { useReveal } from '../hooks/hooks.js'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { technology } from '../data/siteContent.js'
 
 const TECH_ICONS = {
   'Quartz Movement': (
@@ -69,9 +69,6 @@ function TechCard({ item, index }) {
 }
 
 export default function Technology() {
-  const { content } = useSiteContent()
-  const { technology } = content
-
   return (
     <section id="technology" className="section technology-section" aria-labelledby="technology-title">
       <div className="container">

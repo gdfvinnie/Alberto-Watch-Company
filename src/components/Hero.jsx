@@ -1,9 +1,7 @@
 import { Photo } from '../art/artMap.jsx'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { hero, brandStrip } from '../data/siteContent.js'
 
 export default function Hero({ onNavigate }) {
-  const { content } = useSiteContent()
-  const { hero, brandStrip } = content
 
   return (
     <section id="home" className="hero" aria-labelledby="hero-title">

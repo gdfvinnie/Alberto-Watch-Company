@@ -1,10 +1,9 @@
 import { buildNavItems } from './Header.jsx'
 import { FacebookIcon, InstagramIcon, XIcon, YouTubeIcon } from './WatchArt.jsx'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { settings, contact } from '../data/siteContent.js'
 
 export default function Footer({ onNavigate }) {
-  const { content } = useSiteContent()
-  const navItems = buildNavItems(content.settings.navLabels)
+  const navItems = buildNavItems(settings.navLabels)
   const links = navItems.filter((i) => i.id !== 'sitemap')
 
   const go = (e, id) => {
@@ -53,10 +52,10 @@ export default function Footer({ onNavigate }) {
           <div className="footer-col">
             <h3>Company Info</h3>
             <ul>
-              <li>{content.contact.address}</li>
-              <li><a href={`mailto:${content.contact.email}`}>{content.contact.email}</a></li>
-              <li><a href={`tel:${content.contact.phone.replace(/\s/g, '')}`}>{content.contact.phone}</a></li>
-              <li>{content.contact.hoursLine1} · {content.contact.hoursLine2}</li>
+              <li>{contact.address}</li>
+              <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>
+              <li><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>
+              <li>{contact.hoursLine1} · {contact.hoursLine2}</li>
             </ul>
             <ul className="footer-social" aria-label="Social media (placeholders)">
               {[
@@ -106,7 +105,7 @@ export default function Footer({ onNavigate }) {
         <div className="footer-bottom">
           <p>
             © 2026 Alberto Watch Company. All Rights Reserved.{' '}
-            <span className="footer-demo-note">{content.settings.footerNote}</span>
+            <span className="footer-demo-note">{settings.footerNote}</span>
           </p>
           <p className="footer-legal">
             <a href="#home" onClick={(e) => go(e, 'home')}>Privacy Policy</a>

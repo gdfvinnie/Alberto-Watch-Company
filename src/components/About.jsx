@@ -1,6 +1,6 @@
 import { useCountUp, useReveal } from '../hooks/hooks.js'
 import { Photo } from '../art/artMap.jsx'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { about } from '../data/siteContent.js'
 
 function Stat({ value, suffix, label }) {
   const [ref, display] = useCountUp(value)
@@ -16,9 +16,6 @@ function Stat({ value, suffix, label }) {
 }
 
 export default function About() {
-  const { content } = useSiteContent()
-  const { about } = content
-
   const [storyRef, storyVisible] = useReveal()
   const [imgRef, imgVisible] = useReveal()
 

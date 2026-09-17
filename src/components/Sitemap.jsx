@@ -1,9 +1,8 @@
 import { buildNavItems } from './Header.jsx'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { settings } from '../data/siteContent.js'
 
 export default function Sitemap({ onNavigate }) {
-  const { content } = useSiteContent()
-  const navItems = buildNavItems(content.settings.navLabels)
+  const navItems = buildNavItems(settings.navLabels)
   const links = navItems.filter((i) => i.id !== 'sitemap')
 
   const go = (e, id) => {

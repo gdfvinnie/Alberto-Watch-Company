@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useReveal } from '../hooks/hooks.js'
 import { CheckIcon } from './WatchArt.jsx'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { services } from '../data/siteContent.js'
 
 const SERVICE_ICONS = {
   'Watch Repair': (
@@ -97,9 +97,6 @@ function ServiceCard({ service, index, onChoose }) {
 }
 
 export default function Support() {
-  const { content } = useSiteContent()
-  const services = content.services.items
-
   const [values, setValues] = useState(EMPTY)
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})

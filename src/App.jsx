@@ -11,63 +11,10 @@ import Contact from './components/Contact.jsx'
 import Sitemap from './components/Sitemap.jsx'
 import Footer from './components/Footer.jsx'
 import DateTimeTicker from './components/DateTimeTicker.jsx'
-import AdminLogin from './components/AdminLogin.jsx'
-import AdminDashboard from './components/AdminDashboard.jsx'
-import { isAuthenticated, getSession } from './data/adminAuth.js'
-import { useSiteContent } from './context/SiteContentContext.jsx'
-
-const isHashAdmin = () => window.location.hash.replace(/^#/, '').toLowerCase() === '/admin'
-
-/** Private admin area — only reachable at #/admin and only with a valid session. */
-function AdminArea({ onExit }) {
-  const [authed, setAuthed] = useState(() => isAuthenticated())
-  const [session, setSession] = useState(() => getSession())
-
-  // Auto sign-out the moment the session token expires.
-  useEffect(() => {
-    if (!authed) return undefined
-    const t = setInterval(() => {
-      if (!isAuthenticated()) {
-        setAuthed(false)
-        setSession(null)
-      } else {
-        setSession(getSession())
-      }
-    }, 30000)
-    return () => clearInterval(t)
-  }, [authed])
-
-  if (!authed) {
-    return (
-      <AdminLogin
-        onAuthed={() => {
-          setAuthed(true)
-          setSession(getSession())
-        }}
-      />
-    )
-  }
-
-  return (
-    <div className="admin-root">
-      <p className="admin-session-meta" hidden>
-        Session for {session?.username} expires at {session ? new Date(session.expiresAt).toLocaleTimeString() : ''}
-      </p>
-      <AdminDashboard
-        onLogout={() => {
-          setAuthed(false)
-          setSession(null)
-          window.location.hash = ''
-          onExit?.()
-        }}
-      />
-    </div>
-  )
-}
+import { settings } from './data/siteContent.js'
 
 function PublicSite() {
-  const { content, previewing } = useSiteContent()
-  const navItems = buildNavItems(content.settings.navLabels)
+  const navItems = buildNavItems(settings.navLabels)
   const VALID_IDS = new Set(navItems.map((i) => i.id))
 
   const [activeSection, setActiveSection] = useState('home')
@@ -136,12 +83,6 @@ function PublicSite() {
 
   return (
     <>
-      {previewing && (
-        <div className="admin-preview-banner public" role="status">
-          Admin preview — you are viewing unpublished draft content.{' '}
-          <a href="#/admin">Return to the admin panel</a>
-        </div>
-      )}
       <a className="skip-link" href="#home">Skip to main content</a>
       <Header activeSection={activeSection} onNavigate={navigate} />
       <main>
@@ -162,26 +103,5 @@ function PublicSite() {
 }
 
 export default function App() {
-  const [route, setRoute] = useState(() => (isHashAdmin() ? 'admin' : 'public'))
-
-  // Tiny hash router: #/admin opens the private admin area,
-  // anything else renders the public SPA.
-  useEffect(() => {
-    const onHash = () => {
-      const admin = isHashAdmin()
-      if (admin) {
-        window.scrollTo(0, 0)
-        document.body.style.overflow = 'hidden'
-      } else {
-        document.body.style.overflow = ''
-      }
-      setRoute(admin ? 'admin' : 'public')
-    }
-    window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
-  }, [])
-
-  if (route === 'admin') return <AdminArea />
-
   return <PublicSite />
 }

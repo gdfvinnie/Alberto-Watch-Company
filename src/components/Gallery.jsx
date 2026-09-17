@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useReveal } from '../hooks/hooks.js'
 import { artFor } from '../art/artMap.jsx'
 import { ChevronLeft, ChevronRight } from './WatchArt.jsx'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { gallery as galleryItems } from '../data/siteContent.js'
 
 function Lightbox({ items, index, onClose, onNav }) {
   const closeRef = useRef(null)
@@ -59,9 +59,6 @@ function Lightbox({ items, index, onClose, onNav }) {
 }
 
 export default function Gallery() {
-  const { content } = useSiteContent()
-  const galleryItems = content.gallery
-
   const [filter, setFilter] = useState('All')
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const [headRef, headVisible] = useReveal()

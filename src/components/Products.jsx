@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { products, categories } from '../data/siteContent.js'
 import { useReveal } from '../hooks/hooks.js'
 import { artFor } from '../art/artMap.jsx'
 import { CheckIcon, ErrorIcon } from './WatchArt.jsx'
@@ -162,6 +162,24 @@ function ProductCard({ product, onView }) {
 function ProductModal({ product, onClose }) {
   const closeRef = useRef(null)
   const dialogRef = useRef(null)
+  const [closing, setClosing] = useState(false)
+  const closingRef = useRef(false)
+
+  // Graceful close: play the subtle exit animation, then unmount.
+  const requestClose = useCallback(() => {
+    if (closingRef.current) return
+    closingRef.current = true
+    setClosing(true)
+    setTimeout(onClose, 170)
+  }, [onClose])
+
+  // Re-arm the close animation whenever a product opens.
+  useEffect(() => {
+    if (product) {
+      closingRef.current = false
+      setClosing(false)
+    }
+  }, [product])
 
   useEffect(() => {
     if (!product) return undefined
@@ -170,7 +188,7 @@ function ProductModal({ product, onClose }) {
     document.body.style.overflow = 'hidden'
 
     const onKey = (e) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') requestClose()
       if (e.key === 'Tab' && dialogRef.current) {
         const focusables = dialogRef.current.querySelectorAll(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
@@ -193,15 +211,15 @@ function ProductModal({ product, onClose }) {
       document.body.style.overflow = ''
       if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus()
     }
-  }, [product, onClose])
+  }, [product, requestClose])
 
   if (!product) return null
 
   return (
     <div
-      className="modal-overlay"
+      className={`modal-overlay${closing ? ' closing' : ''}`}
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose()
+        if (e.target === e.currentTarget) requestClose()
       }}
     >
       <div
@@ -216,7 +234,7 @@ function ProductModal({ product, onClose }) {
           type="button"
           className="modal-x"
           aria-label="Close product details"
-          onClick={onClose}
+          onClick={requestClose}
         >
           ×
         </button>
@@ -287,10 +305,10 @@ function ProductModal({ product, onClose }) {
             </div>
           </dl>
           <div className="modal-actions">
-            <button type="button" className="btn btn-gold" onClick={onClose}>
+            <button type="button" className="btn btn-gold" onClick={requestClose}>
               Close
             </button>
-            <a className="btn btn-outline-light-lux" href="#contact" onClick={onClose}>
+            <a className="btn btn-outline-light-lux" href="#contact" onClick={requestClose}>
               Enquire
             </a>
           </div>
@@ -392,9 +410,6 @@ function PriceList({ filters, onFilterViaRow, products }) {
 const EMPTY_FILTERS = { query: '', brand: 'all', movement: 'all', price: 'all', availability: 'all' }
 
 export default function Products() {
-  const { content } = useSiteContent()
-  const products = content.products
-  const categories = content.categories
   const brands = [...new Set(products.map((p) => p.brand))].sort()
   const movements = [...new Set(products.map((p) => p.movement.split('(')[0].trim()))].sort()
 
@@ -402,6 +417,9 @@ export default function Products() {
   const [modalProduct, setModalProduct] = useState(null)
   const [filters, setFilters] = useState(EMPTY_FILTERS)
   const resultsRef = useRef(null)
+
+  // Stable close handler so the modal's effects don't re-run on parent re-renders.
+  const closeModal = useCallback(() => setModalProduct(null), [])
 
   const filtered = useMemo(() => {
     const q = filters.query.trim().toLowerCase()
@@ -523,7 +541,7 @@ export default function Products() {
         <PriceList filters={filters} onFilterViaRow={filterToCategory} products={products} />
       </div>
 
-      <ProductModal product={modalProduct} onClose={() => setModalProduct(null)} />
+      <ProductModal product={modalProduct} onClose={closeModal} />
     </section>
   )
 }

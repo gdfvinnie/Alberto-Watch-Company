@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { useSiteContent } from '../context/SiteContentContext.jsx'
+import { settings } from '../data/siteContent.js'
 
 export function buildNavItems(navLabels) {
   const labels = navLabels || {}
@@ -16,40 +16,11 @@ export function buildNavItems(navLabels) {
   ]
 }
 
-const VISITOR_BASE = 1245
-
-/** Front-end persistent visitor counter (localStorage simulated backend). */
-function getVisitorCount() {
-  try {
-    const stored = window.localStorage.getItem('awc_visitors')
-    const base = stored !== null ? parseInt(stored, 10) : VISITOR_BASE
-    const count = (Number.isFinite(base) ? base : VISITOR_BASE) + 1
-    window.localStorage.setItem('awc_visitors', String(count))
-    return count
-  } catch {
-    /* private mode / storage disabled — session-only fallback */
-    return VISITOR_BASE + 1
-  }
-}
-
-function formatCounter(n) {
-  return String(n).padStart(6, '0')
-}
-
 export default function Header({ activeSection, onNavigate }) {
-  const { content } = useSiteContent()
-  const { settings } = content
-
-  const [visitors, setVisitors] = useState(() => formatCounter(VISITOR_BASE))
   const [menuOpen, setMenuOpen] = useState(false)
   const navListRef = useRef(null)
 
   const navItems = buildNavItems(settings.navLabels)
-
-  // Increment once per page load/refresh, then display the padded value.
-  useEffect(() => {
-    setVisitors(formatCounter(getVisitorCount()))
-  }, [])
 
   // Close the mobile menu with Escape or when clicking outside.
   useEffect(() => {
@@ -85,28 +56,6 @@ export default function Header({ activeSection, onNavigate }) {
 
   return (
     <header className="site-header" id="site-top">
-      {/* -------- Utility topbar — optional, managed from the admin panel -------- */}
-      {settings.showTopbar && (
-        <div className="topbar">
-          <div className="container topbar-inner">
-            <ul className="topbar-links">
-              <li><a href={`tel:${settings.topbarPhone.replace(/\s/g, '')}`}>{settings.topbarPhone}</a></li>
-              <li><a href={`mailto:${settings.topbarEmail}`}>{settings.topbarEmail}</a></li>
-            </ul>
-            <ul className="topbar-links">
-              <li><span className="topbar-note">{settings.topbarNote}</span></li>
-              {settings.showVisitorCounter && (
-                <li>
-                  <span className="visitor-badge" title="Unique visits since first launch (stored in your browser)">
-                    Visitors: <span className="visitor-count">{visitors}</span>
-                  </span>
-                </li>
-              )}
-            </ul>
-          </div>
-        </div>
-      )}
-
       {/* -------- Brand row: ALBERTO perfectly centered on every screen -------- */}
       <div className="brand-row">
         <button
